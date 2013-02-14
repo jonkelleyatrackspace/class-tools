@@ -26,6 +26,8 @@ class LogClass():
         self.logger.addHandler(fh)
         self.logger.addHandler(ch)
 
+instance = LogClass()
+
 if __name__ == '__main__':
     """ Pretty much how to use this from a module """
     logclass = LogClass('test')
