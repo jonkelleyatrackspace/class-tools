@@ -1,14 +1,9 @@
 import logging
 
-# ------------------------------------------------------------------------
-# If you plan to change these ever, you should probably config it.
-LOG_LEVEL_CONSOLE    = logging.INFO
-LOG_LEVEL_FILEHANDLE = logging.DEBUG
-LOG_APPNAME          = "rsbakthat"
-LOG_FILE             = "rsbakthat.log"
-
-class LogClass():
-    def __init__(self):
+class instance(object):
+    def __init__(self,LOG_APPNAME='eg',LOG_FILE='/tmp/eg.log',
+                 LOG_LEVEL_FILEHANDLE=logging.DEBUG,
+                 LOG_LEVEL_CONSOLE=logging.INFO):
         # Logger.
         self.logger = logging.getLogger(LOG_APPNAME)
         self.logger.setLevel(logging.DEBUG)
@@ -26,15 +21,14 @@ class LogClass():
         self.logger.addHandler(fh)
         self.logger.addHandler(ch)
 
-instance = LogClass()
+
 
 if __name__ == '__main__':
     """ Pretty much how to use this from a module """
-    logclass = LogClass()
+    log = instance('example','/tmp/example.log')
     print("You found the secret cow level.")
-    logclass.logger.debug('DEBUG.TEST.MESSAGE')
-    logclass.logger.info('INFO.TEST.MESSAGE')
-    logclass.logger.warn('WARN.TEST.MESSAGE')
-    logclass.logger.error('ERROR.TEST.MESSAGE')
-    logclass.logger.critical('CRITICAL.TEST.MESSAGE')
-
+    log.logger.debug('DEBUG.TEST.MESSAGE')
+    log.logger.info('INFO.TEST.MESSAGE')
+    log.logger.warn('WARN.TEST.MESSAGE')
+    log.logger.error('ERROR.TEST.MESSAGE')
+    log.logger.critical('CRITICAL.TEST.MESSAGE')
