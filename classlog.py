@@ -1,9 +1,21 @@
 import logging
 
-class instance(object):
-    def __init__(self,LOG_APPNAME='raxstat',LOG_FILE='/tmp/app.log',
-                 LOG_LEVEL_FILEHANDLE=logging.DEBUG,
-                 LOG_LEVEL_CONSOLE=logging.INFO):
+class logObject(object):
+    def setLogFormat(self,format=None):
+        """ Set this before you run buildlogger if you want to overwrite the default log formatting params"""
+            self.format = format
+    def getLogFormat(self):
+        """ Used internally to return a default log string if you don't override it"""
+        if not hasattr(self, 'format'):
+            return '%(asctime)s - %(name)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s - PID: %(process)d '
+        else:
+            return self.format
+    def buildLogger(self,
+                    LOG_APPNAME='myapp',
+                    LOG_FILE='/tmp/myapp.log',
+                    LOG_LEVEL_FILEHANDLE=logging.NOTSET,
+                    LOG_LEVEL_CONSOLE=logging.NOTSET):
+        """ Sets up the logger """
         # Logger.
         self.logger = logging.getLogger(LOG_APPNAME)
         self.logger.setLevel(logging.DEBUG)
@@ -14,17 +26,21 @@ class instance(object):
         ch = logging.StreamHandler()
         ch.setLevel(LOG_LEVEL_CONSOLE) # Errors only.
         # Apply logformat.
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s - PID: %(process)d  ' )
+        format = self.getLogFormat()
+        formatter = logging.Formatter(format)
+
+
         fh.setFormatter(formatter)
         ch.setFormatter(formatter)
         # Add handdler to logger instance.
         self.logger.addHandler(fh)
         self.logger.addHandler(ch)
 
-
 if __name__ == '__main__':
     """ Pretty much how to use this from a module """
-    log = instance('lol','/var/log/lol.log')
+    log = logObject()
+    log.setLogFormat('Custom format... %(asctime)s - %(name)s - %(filename)s:%(lineno)d - %(levelname)s - %(message)s - PID: %(process)d')
+    log.buildLogger('lol','/tmp/lol.log',LOG_LEVEL_CONSOLE=logging.DEBUG)
     print("You found the secret cow level.")
     log.logger.debug('DEBUG.TEST.MESSAGE')
     log.logger.info('INFO.TEST.MESSAGE')
@@ -32,16 +48,5 @@ if __name__ == '__main__':
     log.logger.error('ERROR.TEST.MESSAGE')
     log.logger.critical('CRITICAL.TEST.MESSAGE')
     
-""" How to use in the wild:
-  From your main application.py you must instanciate it first, doing something like:
 
-  application.py
-    import logclass; ohi = logclass.instance('project','/tmp/project.log',logging.DEBUG,logging.DEBUG)
-    logger = logging.getLogger("project") 
-    logger.debug('first message!')
 
-  sub-module.py
-    import logging; logger = logging.getLogger("raxstat") 
-    logger.debug('first message!')
-
-"""
